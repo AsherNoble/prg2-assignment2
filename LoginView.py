@@ -42,8 +42,8 @@ class LoginView:
                 return
                 
             league.set_logged_in_manager(manager)
-            root = ut.same_window("Manager Dashboard", self.root)
-            ManagerDashboardView(root, league, manager).control()
+            ut.same_window("Manager Dashboard", self.root)
+            ManagerDashboardView(self.root, self.model).control()
 
 
         btn_frame = Frame(self.root, bg=ut.red)
