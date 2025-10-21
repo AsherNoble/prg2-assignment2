@@ -1,4 +1,5 @@
 from tkinter import *
+from RedButton import red_button
 from TkUtils import TkUtils as ut
 
 class SwapView:
@@ -25,12 +26,12 @@ class SwapView:
         bottom = Frame(self.root)
         bottom.pack(fill=X, pady=(10, 0))
         
-        self.swap_btn = ut.button(bottom, "Swap", self.on_swap)
+        self.swap_btn = red_button(bottom, "Swap", self.on_swap)
         self.swap_btn.config(state=DISABLED)
         self.swap_btn.pack(side=LEFT, expand=True, fill=X)
 
         self.tree.bind("<<TreeviewSelect>>", self.on_select)
-        ut.button(bottom, "Close", self.root.destroy).pack(side=LEFT, expand=True, fill=X)
+        red_button(bottom, "Close", self.root.destroy).pack(side=LEFT, expand=True, fill=X)
 
     def _load_teams(self):
         names = []
