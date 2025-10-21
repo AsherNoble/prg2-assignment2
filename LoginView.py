@@ -1,12 +1,12 @@
 from tkinter import *
 from ErrorView import ErrorView
 from ManagerDashboardView import ManagerDashboardView
+from RedButton import red_button
 from TkUtils import TkUtils as ut
 from model.application.League import league
 from model.exception.UnauthorisedAccessException import UnauthorisedAccessException
 
 class LoginView:
-
     def __init__(self, root, model):
         self.root = root
         self.model = model
@@ -31,10 +31,10 @@ class LoginView:
             
             try:
                 manager = league.validate_manager(manager_id)
-            except UnauthorisedAccessException as e:
+            except UnauthorisedAccessException as error:
                 win = ut.top_level("Error")
                 win.title("Error")
-                ErrorView(win, self.model, e).control()
+                ErrorView(win, self.model, error).control()
 
                 win.transient(self.root)
                 win.grab_set()
@@ -44,14 +44,11 @@ class LoginView:
             league.set_logged_in_manager(manager)
             ut.same_window("Manager Dashboard", self.root)
             ManagerDashboardView(self.root, self.model).control()
-
-
-        btn_frame = Frame(self.root, bg=ut.red)
+        
+        btn_frame = Frame(self.root)
+        red_button(btn_frame, "Login", on_login).pack(side=LEFT, expand=True, fill=X)
+        red_button(btn_frame, "Close", self.root.destroy).pack(side=LEFT, expand=True, fill=X)
         btn_frame.pack(expand=True, fill=BOTH, pady=(10, 0))
-
-        ut.button(btn_frame, "Login", on_login).pack(side=LEFT, expand=True, fill=X, padx=1, pady=1)
-        ut.button(btn_frame, "Close", self.root.destroy).pack(side=LEFT, expand=True, fill=X, padx=1, pady=1)
-
 
 if __name__ == "__main__":
     root = ut.root()
