@@ -1,4 +1,5 @@
 from tkinter import *
+from RedButton import red_button
 from TkUtils import TkUtils as ut
 
 class ErrorView:
@@ -21,4 +22,4 @@ class ErrorView:
 
         bottom = Frame(self.root, bg="#d9d9d9")
         bottom.pack(fill=X, pady=(4, 12))
-        ut.button(bottom, "Close", self.root.destroy).pack(fill=X, padx=12)
+        red_button(bottom, "Close", self.root.destroy).pack(fill=X, padx=12)
