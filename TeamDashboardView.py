@@ -110,68 +110,42 @@ class TeamDashboardView:
         
 
     def _get_selected_player(self):
-        sel = self.players_tree.selection() if self.players_tree else ()
-        if not sel:
+        selection = self.players_tree.selection()
+        if not selection:
             return None
-        name = self.players_tree.item(sel[0])["values"][0]
-        pool = []
-        if hasattr(self.model, "get_players") and hasattr(self.model.get_players(), "get_players"):
-            pool = self.model.get_players().get_players()
-        elif hasattr(self.team, "get_all_players") and hasattr(self.team.get_all_players(), "get_players"):
-            pool = self.team.get_all_players().get_players()
-
-        def full_name(player):
-            if hasattr(player, "name") and player.name:
-                return player.name
-            first_name = getattr(player, "first_name", "")
-            last_name = getattr(player, "last_name", "")
-            return f"{first_name} {last_name}".strip()
+        selected_name = self.players_tree.item(selection[0])["values"][0]
+        
+        pool = self.team.get_all_players().get_players()
 
         for player in pool:
-            if full_name(player) == name:
+            if player.get_full_name() == selected_name:
                 return player
         return None
     
     
     def _refresh_slots(self):
         jersey_active = f"image/{self.team.get_team_name().lower()}.png"
-        jersey_empty  = "image/none.png"
+        jersey_empty = "image/none.png"
 
-        for i, label in enumerate(self.slot_labels):
-            player = self.team.current_team[i]
+        for index, label in enumerate(self.slot_labels):
+            player = self.team.current_team[index]
             image_path = jersey_active if player else jersey_empty
-            temp_label = ut.image(label.master, image_path, height=64, width=64, background="#2b2b2b")
 
-            label.configure(image=temp_label.photo)
-            label.photo = temp_label.photo
+            temp = ut.image(label.master, image_path, height=64, width=64, background="#FFFFFF")
+            label.configure(image=temp.photo)
+            label.photo = temp.photo
 
-            tooltip_text = (
-                "Empty slot"
-                if player is None
-                else f"{player.get_full_name()} ({player.get_position()})"
-            )
-
-            ut.attach_tooltip(label, tooltip_text)
+            tooltip = "Empty slot" if player is None else f"{player.get_full_name()} ({player.get_position()})"
+            ut.attach_tooltip(label, tooltip)
 
 
     def _load_players(self, team):
-        rows = []
-        try:
-            all_players = team.get_all_players().get_players() if team else []
-            for player in all_players:
-                name = getattr(player, "name", None)
-                if not name:
-                    first_name = getattr(player, "first_name", "")
-                    last_name = getattr(player, "last_name", "")
-                    name = f"{first_name} {last_name}".strip()
-                position = getattr(player, "position", getattr(player, "get_position", lambda: ""))
-                position = position() if callable(position) else position
-                rows.append((name, position))
-        except Exception:
-            rows = []
-
-        for name, position in rows:
-            self.players_tree.insert("", "end", values=(name, position))
+        players = team.get_all_players().get_players() if team else []
+        for player in players:
+            self.players_tree.insert(
+                "", "end",
+                values=(player.get_full_name(), player.get_position())
+            )
             
 
     def _update_sign_state(self):
@@ -199,7 +173,7 @@ class TeamDashboardView:
                 raise InvalidSigningException(f"{player.get_full_name()} is already signed to your team")
             
             if player.get_team() is not None:
-                raise InvalidSigningException(f"Cannot sign {player.get_full_name()}, player is already signed to {player.get_team().__str__()}")
+                raise InvalidSigningException(f"Cannot sign {player.get_full_name()}, player is already signed to {player.get_team()}")
  
 
             self.team.get_all_players().add(player)
