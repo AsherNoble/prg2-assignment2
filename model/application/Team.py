@@ -21,11 +21,6 @@ class Team:
 
     def get_all_players(self):
         return self.all_players
-    
-    def add_player(self, player):
-        if player not in self.all_players.get_players():
-            self.all_players.get_players().append(player)
-        player.set_team(self)
 
     def __str__(self):
         return self.local_name + " " + self.team_name
