@@ -101,21 +101,29 @@ class TkUtils:
             pack.destroy()
         root.title(title)
         return root
-
+    
+    # Replaced the tk.Button() with a ttk.Button() as the styled button was not working on MacOs
     @staticmethod
     def button(root, text_, callback=None):
-        """
-        Generates a prestyled button according to the assignment specifications.
-
-        Parameters:
-            root (tk.Tk): The window or frame containing the button.
-            text_ (str): The text of the button.
-            callback (function): The callback function.
-
-        Returns:
-            A tk.Button() object, prestyled and preconfigured.
-        """
-        return ObservableButton(root, text_, callback, TkUtils.red, "#ff8080")
+        style = ttk.Style()
+        try:
+            style.theme_use("clam")
+        except:
+            pass
+        style.configure(
+            "Red.TButton",
+            background=TkUtils.red,
+            foreground="white",
+            font="Arial 11 bold",
+            borderwidth=0,
+            focusthickness=0
+        )
+        style.map(
+            "Red.TButton",
+            background=[("active", "#ff8080"), ("pressed", "#ff8080")],
+            foreground=[("disabled", "gray80")]
+        )
+        return ttk.Button(root, text=text_, command=callback, style="Red.TButton")
 
     @staticmethod
     def separator(root):

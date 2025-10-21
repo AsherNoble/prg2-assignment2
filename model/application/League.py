@@ -59,6 +59,7 @@ class League:
         self.manageable_teams.add(manager.get_team())
         manager.get_team().set_manager(None)
         manager.assign_team(None)
+        print('success')
 
     def validate_manager(self, id):
         """
